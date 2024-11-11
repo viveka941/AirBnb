@@ -50,11 +50,14 @@ const sessionOption = {
 app.use(session(sessionOption));
 app.use(flash());
 
+
 app.use((req,res,next)=>{
   res.locals.successMsg = req.flash("success");
-  res.locals.errorMsg = req.flash("error");
+ res.locals.errorMsg = req.flash("error");
   next();
 })
+app.use("/listings",listings);
+
 
 app.get("/reqcount", (req, res) => {
   if (req.session.count) {
@@ -86,8 +89,10 @@ app.get("/hello", (req, res) => {
 // Middleware to set up flash messages in all routes
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   next();
 });
+
 
 
 
