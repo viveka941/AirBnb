@@ -30,10 +30,6 @@ router.get(
   })
 );
 
-
-
-
-
 // Route to render form for new listing
 router.get("/new", (req, res) => {
   res.render("listings/new.ejs");
@@ -44,26 +40,38 @@ router.post(
   "/",
   validateListing,
   wrapAsync(async (req, res, next) => {
-    let result = listingSchema.validate(req.body);
-    console.log(result);
     const newlisting = new Listing(req.body.listing);
     await newlisting.save();
+    req.flash("success","New Listing created");
     res.redirect("/listings");
   })
 );
 
 // Show route for a specific listing
+const mongoose = require("mongoose");
+
 router.get(
   "/:id",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
+
+    // Check if `id` is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      req.flash("error", "Invalid listing ID.");
+      return res.redirect("/listings");
+    }
+
+    // Proceed to find listing if ID is valid
     const listing = await Listing.findById(id).populate("review");
     if (!listing) {
-      return next(new ExpressError(404, "Listing not found"));
+      req.flash("error", "Listing does not exist.");
+      return res.redirect("/listings");
     }
+
     res.render("listings/show.ejs", { listing });
   })
 );
+
 
 router.get(
   "/:id/edit",
@@ -85,6 +93,7 @@ router.put(
     if (!updatedListing) {
       throw new ExpressError(404, "Listing not found for update");
     }
+     req.flash("success", "Listing Updated");
     res.redirect(`/listings/${id}`);
   })
 );
@@ -98,6 +107,7 @@ router.delete(
     if (!deletedListing) {
       throw new ExpressError(404, "Listing not found for deletion");
     }
+    req.flash("success","Listing Deleted");
     res.redirect("/listings");
   })
 );

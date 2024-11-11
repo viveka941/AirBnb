@@ -100,6 +100,20 @@
 </head>
 
 <body>
+  <% if (successMsg) { %>
+    <div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert">
+      <%= successMsg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        </button>
+    </div>
+    <% } %>
+    <% if (errorMsg) { %> 
+      <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert">
+        <%= errorMsg %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          </button>
+      </div>
+      <% } %>
   <div class="listing-container">
     <h3 class="text-center mb-4">Listing Details</h3>
     <div class="listing-details">

@@ -74,8 +74,10 @@
 </head>
 
 <body>
+
   <div class="form-container">
     <h2>Edit your listing</h2>
+    
     <form action="/listings/<%= listing._id %>?_method=PUT" method="POST">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>

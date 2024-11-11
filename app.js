@@ -12,7 +12,9 @@ const ExpressError = require("./utils/ExpressError");
 const listings = require("./routes/listing.js");
 const Listing = require("./models/listing.js");
 const Review = require("./models/review.js");
-
+const passport = require("passport");
+const localStrategy=require("passport-local");
+const User = require("./models/user.js");
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
 // MongoDB connection
@@ -50,11 +52,23 @@ const sessionOption = {
 app.use(session(sessionOption));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
   res.locals.successMsg = req.flash("success");
-  res.locals.errorMsg = req.flash("error");
+ res.locals.errorMsg = req.flash("error");
   next();
 })
+
+
+
+
+app.use("/listings",listings);
+
 
 app.get("/reqcount", (req, res) => {
   if (req.session.count) {
@@ -86,8 +100,10 @@ app.get("/hello", (req, res) => {
 // Middleware to set up flash messages in all routes
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   next();
 });
+
 
 
 
