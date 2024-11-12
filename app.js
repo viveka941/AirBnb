@@ -63,6 +63,8 @@ app.use((req,res,next)=>{
  res.locals.errorMsg = req.flash("error");
   next();
 })
+app.use("/listings",listings);
+
 
 app.get("/demouser",async (req,res)=>{
   let fakeuser = new User({
