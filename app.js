@@ -64,7 +64,14 @@ app.use((req,res,next)=>{
   next();
 })
 
-
+app.get("/demouser",async (req,res)=>{
+  let fakeuser = new User({
+    email:"student@gmail.com",
+    username:"student"
+  });
+   let ragisterUser = await User.register(fakeuser,"Helloworld");
+   res.send(ragisterUser);
+})
 
 
 app.use("/listings",listings);

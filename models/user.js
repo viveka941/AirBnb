@@ -10,5 +10,5 @@ const userSchema = new Schema({
 
 })
 
-User.plugin(passportLocalMongoose); // automatically impliment solting 
+userSchema.plugin(passportLocalMongoose); // automatically impliment solting 
 module.exports = mongoose.model("User", userSchema);
