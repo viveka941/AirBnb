@@ -4,6 +4,7 @@ const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing.js");
 
+
 // Wrapper to handle async errors
 function wrapAsync(fn) {
   return function (req, res, next) {
@@ -32,6 +33,10 @@ router.get(
 
 // Route to render form for new listing
 router.get("/new", (req, res) => {
+  if(!req.isAuthenticated()){
+    req.flash("error","you must be logged in to create listing!");
+    return res.redirect("/login")
+  }
   res.render("listings/new.ejs");
 });
 
@@ -40,6 +45,10 @@ router.post(
   "/",
   validateListing,
   wrapAsync(async (req, res, next) => {
+ if (!req.isAuthenticated()) {
+   req.flash("error", "you must be logged in to create listing!");
+   return res.redirect("/login");
+ }
     const newlisting = new Listing(req.body.listing);
     await newlisting.save();
     req.flash("success","New Listing created");
@@ -76,6 +85,10 @@ router.get(
 router.get(
   "/:id/edit",
   wrapAsync(async (req, res) => {
+     if (!req.isAuthenticated()) {
+       req.flash("error", "you must be logged in to create listing!");
+       return res.redirect("/login");
+     }
     const { id } = req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs", { listing });
@@ -86,6 +99,10 @@ router.put(
   "/:id",
   validateListing,
   wrapAsync(async (req, res) => {
+     if (!req.isAuthenticated()) {
+       req.flash("error", "you must be logged in to create listing!");
+       return res.redirect("/login");
+     }
     const { id } = req.params;
     const updatedListing = await Listing.findByIdAndUpdate(id, {
       ...req.body.listing,
@@ -102,6 +119,10 @@ router.put(
 router.delete(
   "/:id",
   wrapAsync(async (req, res) => {
+     if (!req.isAuthenticated()) {
+       req.flash("error", "you must be logged in to create listing!");
+       return res.redirect("/login");
+     }
     const { id } = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);
     if (!deletedListing) {

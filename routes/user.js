@@ -39,11 +39,9 @@ router.post(
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: true,
-  }),
-  async (req, res) => {
-    req.flash("success","Welcom to the Wonderlust")
-    res.redirect("/listings");
-  }
+    successRedirect: "/listings",
+    successFlash: "Welcome back!",
+  })
 );
 
 module.exports = router;

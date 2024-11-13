@@ -11,6 +11,7 @@
       font-family: Arial, sans-serif;
       background-color: #f0f8ff;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -70,14 +71,48 @@
         opacity: 1;
       }
     }
+
+    .navbar-custom {
+      background-color: #4a90e2;
+    }
+
+    .navbar-custom a {
+      color: white;
+      margin: 0 15px;
+      font-size: 16px;
+    }
+
+    .navbar-custom a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-custom w-100">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Wanderlust</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/listings">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/listings">All Listings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/listings/new">Add New Listing</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <div class="form-container">
     <h2>Edit your listing</h2>
-    
+
     <form action="/listings/<%= listing._id %>?_method=PUT" method="POST">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
