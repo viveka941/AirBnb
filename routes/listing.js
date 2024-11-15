@@ -33,6 +33,7 @@ router.get(
 
 // Route to render form for new listing
 router.get("/new", (req, res) => {
+  console.log(req.user);
   if(!req.isAuthenticated()){
     req.flash("error","you must be logged in to create listing!");
     return res.redirect("/login")
