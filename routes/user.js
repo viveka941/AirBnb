@@ -41,15 +41,30 @@ router.get("/login", (req, res) => {
   res.render("users/login.ejs");
 });
 
+saveRedirectUrl = (req, res, next) => {
+  if (req.session.redirect) {
+    res.locals.redirect = req.session.redirect;
+  }
+  next();
+};
+
+
 router.post(
   "/login",
+  saveRedirectUrl,
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: true,
-    successRedirect: "/listings",
     successFlash: "Welcome back!",
-  })
+  }),
+  (req, res) => {
+    const redirectUrl = req.session.redirect || "/listings";
+    delete req.session.redirect; // Clear the session after using the redirect URL
+    req.flash("success", "Welcome back to Wanderlust");
+    res.redirect(redirectUrl);
+  }
 );
+
 
 router.get("/logout",(req,res,next)=>{
   req.logout((err)=>{

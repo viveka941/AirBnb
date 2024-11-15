@@ -43,9 +43,9 @@ app.use(express.static("public"));
 
 // Set up session middleware
 const sessionOption = {
-  secret: "mysuperstring",
-  resave: false,
-  saveUninitialized: true,
+    secret: "mysuperstring",
+    resave: false,
+    saveUninitialized: true,
   cookie:{
     expires: Date.now() +7 *24 *60*60*1000,
     maxAge:7*24*60*60*1000,
@@ -64,7 +64,7 @@ passport.deserializeUser(User.deserializeUser());
 // Middleware to set up flash messages in all routes
 app.use((req,res,next)=>{
   res.locals.successMsg = req.flash("success");
- res.locals.errorMsg = req.flash("error");
+  res.locals.errorMsg = req.flash("error");
  res.locals.currUser=req.user;
   next();
 })
@@ -109,13 +109,6 @@ app.get("/hello", (req, res) => {
   
   res.render("listings/page.ejs", { name: req.session.name });
 });
-
-
-
-
-
-
-
 
 
 // Middleware for async error handling

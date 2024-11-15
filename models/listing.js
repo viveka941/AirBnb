@@ -8,10 +8,10 @@ const listingSchema = new Schema({
   images: {
     type: String,
     default:
-      "https://www.pexels.com/photo/woman-wearing-white-pink-and-green-floral-dress-holding-pink-bougainvillea-flowers-206557/",
+      "https://images.pexels.com/photos/297984/pexels-photo-297984.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     set: (v) =>
       v === ""
-        ? "https://www.pexels.com/photo/woman-wearing-white-pink-and-green-floral-dress-holding-pink-bougainvillea-flowers-206557/"
+        ? "https://images.pexels.com/photos/297984/pexels-photo-297984.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
         : v,
   },
   price: Number,
