@@ -30,8 +30,17 @@ router.get(
   })
 );
 
+
+
 // Route to render form for new listing
 router.get("/new", (req, res) => {
+  console.log(req.user);
+ // console.log(req.path, "..", req.originalUrl);
+  if (!req.isAuthenticated()) {
+    req.session.redirect = req.originalUrl;
+    req.flash("error", "you must be logged in to create listing!");
+    return res.redirect("/login");
+  }
   res.render("listings/new.ejs");
 });
 
@@ -40,9 +49,13 @@ router.post(
   "/",
   validateListing,
   wrapAsync(async (req, res, next) => {
+    if (!req.isAuthenticated()) {
+      req.flash("error", "you must be logged in to create listing!");
+      return res.redirect("/login");
+    }
     const newlisting = new Listing(req.body.listing);
     await newlisting.save();
-    req.flash("success","New Listing created");
+    req.flash("success", "New Listing created");
     res.redirect("/listings");
   })
 );
@@ -62,20 +75,23 @@ router.get(
     }
 
     // Proceed to find listing if ID is valid
-    const listing = await Listing.findById(id).populate("review");
+    const listing = await Listing.findById(id).populate("review").populate("owner");
     if (!listing) {
       req.flash("error", "Listing does not exist.");
       return res.redirect("/listings");
     }
-
+    console.log(listing);
     res.render("listings/show.ejs", { listing });
   })
 );
 
-
 router.get(
   "/:id/edit",
   wrapAsync(async (req, res) => {
+    if (!req.isAuthenticated()) {
+      req.flash("error", "you must be logged in to create listing!");
+      return res.redirect("/login");
+    }
     const { id } = req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs", { listing });
@@ -86,6 +102,10 @@ router.put(
   "/:id",
   validateListing,
   wrapAsync(async (req, res) => {
+    if (!req.isAuthenticated()) {
+      req.flash("error", "you must be logged in to create listing!");
+      return res.redirect("/login");
+    }
     const { id } = req.params;
     const updatedListing = await Listing.findByIdAndUpdate(id, {
       ...req.body.listing,
@@ -93,7 +113,7 @@ router.put(
     if (!updatedListing) {
       throw new ExpressError(404, "Listing not found for update");
     }
-     req.flash("success", "Listing Updated");
+    req.flash("success", "Listing Updated");
     res.redirect(`/listings/${id}`);
   })
 );
@@ -102,12 +122,16 @@ router.put(
 router.delete(
   "/:id",
   wrapAsync(async (req, res) => {
+    if (!req.isAuthenticated()) {
+      req.flash("error", "you must be logged in to create listing!");
+      return res.redirect("/login");
+    }
     const { id } = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);
     if (!deletedListing) {
       throw new ExpressError(404, "Listing not found for deletion");
     }
-    req.flash("success","Listing Deleted");
+    req.flash("success", "Listing Deleted");
     res.redirect("/listings");
   })
 );

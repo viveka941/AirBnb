@@ -15,6 +15,8 @@ const Review = require("./models/review.js");
 const passport = require("passport");
 const localStrategy=require("passport-local");
 const User = require("./models/user.js");
+const userRouter=require("./routes/user.js");
+
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
 // MongoDB connection
@@ -34,15 +36,16 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// Middleware setup
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static("public"));
 
 // Set up session middleware
 const sessionOption = {
-  secret: "mysuperstring",
-  resave: false,
-  saveUninitialized: true,
+    secret: "mysuperstring",
+    resave: false,
+    saveUninitialized: true,
   cookie:{
     expires: Date.now() +7 *24 *60*60*1000,
     maxAge:7*24*60*60*1000,
@@ -58,12 +61,15 @@ passport.use(new localStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Middleware to set up flash messages in all routes
 app.use((req,res,next)=>{
   res.locals.successMsg = req.flash("success");
- res.locals.errorMsg = req.flash("error");
+  res.locals.errorMsg = req.flash("error");
+ res.locals.currUser=req.user;
   next();
 })
 app.use("/listings",listings);
+app.use("/",userRouter)
 
 
 app.get("/demouser",async (req,res)=>{
@@ -103,17 +109,6 @@ app.get("/hello", (req, res) => {
   
   res.render("listings/page.ejs", { name: req.session.name });
 });
-
-
-
-// Middleware to set up flash messages in all routes
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  next();
-});
-
-
 
 
 // Middleware for async error handling
@@ -172,11 +167,13 @@ app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found"));
 });
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong" } = err;
   res.status(statusCode).render("listings/error.ejs", { err });
 });
 
+// Server start
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });

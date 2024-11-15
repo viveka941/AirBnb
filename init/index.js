@@ -14,7 +14,7 @@ main()
 
 
 async function main() {
-   await mongoose.connect(mongo_url);
+  await mongoose.connect(mongo_url);
 }
 
 const initDB = async ()=>{
