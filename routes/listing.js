@@ -31,35 +31,23 @@ const validateListing = (req, res, next) => {
   next();
 };
 
-// Index route to show all listings
-router.get("/", wrapAsync(index));
+router
+  .route("/")
+  .get(wrapAsync(index))
+  .post(isLoggedIn, validateListing, wrapAsync(createListing));
 
 // Route to render form for new listing
 router.get("/new", isLoggedIn, newListing);
 
-//create route
-router.post(
-  "/",
-  validateListing,
-
-  wrapAsync(createListing)
-);
-
 // Show route for a specific listing
-router.get("/:id", wrapAsync(showAllList));
+router
+  .route("/:id")
+  .get(wrapAsync(showAllList))
+  .put(isLoggedIn, isOwner, validateListing, wrapAsync(updateListing))
+  .delete(isLoggedIn, isOwner, wrapAsync(deleteListing));
+
 //Edit route
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(editListing));
-// Update route to modify a specific listing
-router.put(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-  validateListing,
 
-  wrapAsync(updateListing)
-);
-
-// Delete route to remove a specific listing
-router.delete("/:id", isLoggedIn, isOwner, wrapAsync(deleteListing));
 
 module.exports = router;
