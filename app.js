@@ -1,4 +1,4 @@
-// this is main file 
+// this is main file
 const express = require("express");
 const session = require("express-session"); // Import express-session
 const app = express();
@@ -14,9 +14,10 @@ const listings = require("./routes/listing.js");
 const Listing = require("./models/listing.js");
 const Review = require("./models/review.js");
 const passport = require("passport");
-const localStrategy=require("passport-local");
+const localStrategy = require("passport-local");
 const User = require("./models/user.js");
-const userRouter=require("./routes/user.js");
+const userRouter = require("./routes/user.js");
+const { isLoggedIn } = require("./middleware.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -44,47 +45,44 @@ app.use(express.static("public"));
 
 // Set up session middleware
 const sessionOption = {
-    secret: "mysuperstring",
-    resave: false,
-    saveUninitialized: false,
-  cookie:{
-    expires: Date.now() +7 *24 *60*60*1000,
-    maxAge:7*24*60*60*1000,
-    httpOnly:true
-  }
+  secret: "mysuperstring",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  },
 };
 app.use(session(sessionOption));
 app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new localStrategy(User.authenticate()))
+passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Middleware to set up flash messages in all routes
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
   res.locals.successMsg = req.flash("success");
   res.locals.errorMsg = req.flash("error");
- res.locals.currUser=req.user;
+  res.locals.currUser = req.user;
   next();
-})
-app.use("/listings",listings);
-app.use("/",userRouter)
+});
+app.use("/listings", listings);
+app.use("/", userRouter);
 
-
-app.get("/demouser",async (req,res)=>{
+app.get("/demouser", async (req, res) => {
   let fakeuser = new User({
-    email:"student@gmail.com",
-    username:"student"
+    email: "student@gmail.com",
+    username: "student",
   });
-   let ragisterUser = await User.register(fakeuser,"Helloworld");
-   res.send(ragisterUser);
-})
+  let ragisterUser = await User.register(fakeuser, "Helloworld");
+  res.send(ragisterUser);
+});
 
-
-app.use("/listings",listings);
-
+app.use("/listings", listings);
 
 app.get("/reqcount", (req, res) => {
   if (req.session.count) {
@@ -107,10 +105,8 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/hello", (req, res) => {
-  
   res.render("listings/page.ejs", { name: req.session.name });
 });
-
 
 // Middleware for async error handling
 function wrapAsync(fn) {
@@ -140,16 +136,19 @@ app.use("/listings", listings);
 // Reviews
 app.post(
   "/listings/:id/reviews",
+  isLoggedIn,
   validateReview,
   wrapAsync(async (req, res) => {
     let listing = await Listing.findById(req.params.id);
     let newReview = new Review(req.body.review);
+    newReview.author=req.user._id;
+  //  console.log(newReview)
     listing.reviews.push(newReview);
 
     await newReview.save();
     await listing.save();
 
-    console.log("New review saved");
+    req.flash("success", "New Reviews created");
     res.redirect(`/listings/${listing._id}`);
   })
 );

@@ -4,6 +4,7 @@ const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing.js");
 const { isLoggedIn, isOwner } = require("../middleware.js");
+const mongoose = require("mongoose");
 // Wrapper to handle async errors
 function wrapAsync(fn) {
   return function (req, res, next) {
@@ -53,8 +54,6 @@ router.post(
 );
 
 // Show route for a specific listing
-const mongoose = require("mongoose");
-
 router.get(
   "/:id",
   wrapAsync(async (req, res, next) => {
@@ -67,9 +66,13 @@ router.get(
     }
 
     // Proceed to find listing if ID is valid
-    const listing = await Listing.findById(id)
-      .populate("review")
-      .populate("owner");
+    const listing = await Listing.findById(id).populate({
+      path: "review",
+      populate: {
+        path: "owner",
+      },
+    });
+
     if (!listing) {
       req.flash("error", "Listing does not exist.");
       return res.redirect("/listings");
@@ -98,7 +101,7 @@ router.put(
 
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    
+
     await Listing.findByIdAndUpdate(id, {
       ...req.body.listing,
     });

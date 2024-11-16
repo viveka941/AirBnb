@@ -167,7 +167,7 @@
     <% } %>
 
     <hr class="my-4">
-
+    <% if(currUser){ %>
     <div class="review-section">
       <h3 class="text-center mb-3">Write a Review</h3>
       <form action="/listings/<%=listing.id%>/reviews" method="post" novalidate class="needs-validation">
@@ -187,6 +187,7 @@
       </form>
     </div>
   </div>
+  <% } %>
 
   <div class="listing-container">
     <h3 class="text-center mb-4">Listing Details</h3>
