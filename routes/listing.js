@@ -5,6 +5,7 @@ const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing.js");
 const { isLoggedIn, isOwner } = require("../middleware.js");
 const mongoose = require("mongoose");
+const { index } = require("../controllers/listings.js");
 // Wrapper to handle async errors
 function wrapAsync(fn) {
   return function (req, res, next) {
@@ -23,13 +24,7 @@ const validateListing = (req, res, next) => {
 };
 
 // Index route to show all listings
-router.get(
-  "/",
-  wrapAsync(async (req, res) => {
-    const allListing = await Listing.find({});
-    res.render("listings/index.ejs", { allListing });
-  })
-);
+router.get("/", wrapAsync(index));
 
 // Route to render form for new listing
 router.get("/new", isLoggedIn, (req, res) => {
