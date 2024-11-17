@@ -1,9 +1,13 @@
+
 const express = require("express");
 const router = express.Router();
 const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing.js");
 const { isLoggedIn, isOwner } = require("../middleware.js");
+const multer = require("multer");
+const {storage}=require("../cloudConfig.js");
+const upload = multer({ storage});
 const mongoose = require("mongoose");
 const {
   index,
@@ -34,7 +38,10 @@ const validateListing = (req, res, next) => {
 router
   .route("/")
   .get(wrapAsync(index))
-  .post(isLoggedIn, validateListing, wrapAsync(createListing));
+  // .post(isLoggedIn, validateListing, wrapAsync(createListing));
+  .post(upload.single("listing[images]"), (req, res) => {
+    res.send(req.file);
+  });
 
 // Route to render form for new listing
 router.get("/new", isLoggedIn, newListing);
@@ -48,6 +55,5 @@ router
 
 //Edit route
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(editListing));
-
 
 module.exports = router;

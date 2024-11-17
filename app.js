@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV != "production"){require("dotenv").config();
+}
+
+
 // this is main file
 const express = require("express");
 const session = require("express-session"); // Import express-session
@@ -141,8 +145,8 @@ app.post(
   wrapAsync(async (req, res) => {
     let listing = await Listing.findById(req.params.id);
     let newReview = new Review(req.body.review);
-    newReview.author=req.user._id;
-  //  console.log(newReview)
+    newReview.author = req.user._id;
+    //  console.log(newReview)
     listing.reviews.push(newReview);
 
     await newReview.save();
