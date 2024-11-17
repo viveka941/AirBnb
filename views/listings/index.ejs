@@ -157,7 +157,7 @@
             <div class="card-container">
               <% for(let listing of allListing) { %>
                 <div class="card">
-                  <img src="<%= listing.images %>" alt="<%= listing.title %>" />
+                  <img src="<%= listing.images.url %>" alt="<%= listing.title %>" />
                   <div class="card-body">
                     <div class="card-title">
                       <%= listing.title %>

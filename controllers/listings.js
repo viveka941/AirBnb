@@ -11,8 +11,12 @@ module.exports.newListing = (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
+  let url=req.file.path;
+  let filename=req.file.filename;
+  //console.log(url,"..",filename);
   const newlisting = new Listing(req.body.listing);
   newlisting.owner = req.user._id;
+  newlisting.images={url,filename}
   await newlisting.save();
   req.flash("success", "New Listing created");
   res.redirect("/listings");
@@ -27,9 +31,10 @@ module.exports.editListing = async (req, res) => {
 module.exports.updateListing = async (req, res) => {
   let { id } = req.params;
 
-  await Listing.findByIdAndUpdate(id, {
+ await Listing.findByIdAndUpdate(id, {
     ...req.body.listing,
   });
+ 
   req.flash("success", "Listing Updated");
   res.redirect(`/listings/${id}`);
 };

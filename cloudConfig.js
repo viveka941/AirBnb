@@ -12,7 +12,26 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "wanderlust_DEV",
-    allowed_formats: ["png", "jpg", "jpeg"],
+    allowed_formats: [
+      "jpg", // JPEG Format
+      "jpeg", // Alternative JPEG Extension
+      "png", // Portable Network Graphics
+      "gif", // Graphics Interchange Format
+      "bmp", // Bitmap Image File
+      "webp", // WebP Image Format
+      "svg", // Scalable Vector Graphics
+      "tiff", // Tagged Image File Format
+      "tif", // Alternative for TIFF
+      "ico", // Icon Format
+      "heic", // High-Efficiency Image Format
+      "heif", // Alternative HEIF Format
+      "avif", // AV1 Image File Format
+      "raw", // Raw Image Data
+      "psd", // Adobe Photoshop Format
+      "eps", // Encapsulated PostScript
+      "ai", // Adobe Illustrator Format
+      "xcf", // GIMP Image File Format
+    ],
   },
 });
 
