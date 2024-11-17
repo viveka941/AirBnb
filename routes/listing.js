@@ -51,7 +51,13 @@ router.get("/new", isLoggedIn, newListing);
 router
   .route("/:id")
   .get(wrapAsync(showAllList))
-  .put(isLoggedIn, isOwner, validateListing, wrapAsync(updateListing))
+  .put(
+    isLoggedIn,
+    isOwner,
+    upload.single("listing[images]"),
+    validateListing,
+    wrapAsync(updateListing)
+  )
   .delete(isLoggedIn, isOwner, wrapAsync(deleteListing));
 
 //Edit route

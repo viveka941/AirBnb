@@ -113,7 +113,7 @@
   <div class="form-container">
     <h2>Edit your listing</h2>
 
-    <form action="/listings/<%= listing._id %>?_method=PUT" method="POST">
+    <form action="/listings/<%= listing._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input type="text" class="form-control" id="title" name="listing[title]" value="<%= listing.title %>"
@@ -125,9 +125,9 @@
           placeholder="Description"><%= listing.description %></textarea>
       </div>
       <div class="mb-3">
-        <label for="images" class="form-label">Image URL</label>
-        <input type="text" class="form-control" id="images" name="listing[images]" value="<%= listing.images %>"
-          placeholder="Image URL">
+        <label for="images" class="form-label"> new Upload Image file</label>
+        <input type="file" class="form-control" id="images" name="listing[images]"
+        >
       </div>
       <div class="mb-3">
         <label for="price" class="form-label">Price</label>
