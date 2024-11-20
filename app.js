@@ -23,11 +23,13 @@ const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
 const { isLoggedIn } = require("./middleware.js");
 
-const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
+// const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
+
+const dbUrl = process.env.ATLUSDB_URL;
 
 // MongoDB connection
 async function main() {
-  await mongoose.connect(mongo_url);
+  await mongoose.connect(dbUrl);
 }
 main()
   .then(() => {
