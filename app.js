@@ -1,10 +1,12 @@
-if(process.env.NODE_ENV != "production"){require("dotenv").config();
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
 }
-
 
 // this is main file
 const express = require("express");
-const session = require("express-session"); // Import express-session
+
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
@@ -50,8 +52,19 @@ app.use(methodOverride("_method"));
 app.use(express.static("public"));
 
 // Set up session middleware
+const store= MongoStore.create({
+  mongoUrl:dbUrl,
+  crypto:{
+    secret:"mysupersecretcode"
+  },
+  touchAfter:24*3600,
+})
+store.on("error",()=>{
+  console.log("Error in Mongo session store",err);
+})
 const sessionOption = {
-  secret: "mysuperstring",
+  store,
+  secret: "mysupersecretcode",
   resave: false,
   saveUninitialized: false,
   cookie: {
